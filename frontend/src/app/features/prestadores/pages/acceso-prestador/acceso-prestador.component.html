@@ -1,0 +1,59 @@
+<section class="acceso-shell" *ngIf="nit(); else sinNit">
+  <div class="acceso-card">
+    <div class="header">
+      <div class="logo">F</div>
+      <div class="nit-box">
+        <div class="label">NIT del prestador</div>
+        <div class="nit">{{ nit() }}</div>
+      </div>
+      <div class="badge">{{ modoCrear() ? 'Crear clave' : 'Ingresar' }}</div>
+    </div>
+
+    <h2>{{ modoCrear() ? 'Crea tu clave de acceso' : 'Ingresa tu clave' }}</h2>
+    <p class="lead" *ngIf="modoCrear()">
+      Por seguridad, define una clave personal para gestionar este NIT. Confírmala para evitar errores.
+    </p>
+    <p class="lead" *ngIf="!modoCrear()">
+      Introduce la clave asociada a este NIT para continuar.
+    </p>
+
+    <div class="alert" *ngIf="mensaje()">{{ mensaje() }}</div>
+    <div class="alert info" *ngIf="cargando()">Procesando...</div>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="enviar()">
+      <label class="label" for="clave">Clave</label>
+      <input id="clave" type="password" formControlName="clave" autocomplete="new-password" />
+      <div class="hint error" *ngIf="form.controls.clave.invalid && (form.controls.clave.dirty || form.controls.clave.touched)">
+        La clave debe tener al menos 6 caracteres.
+      </div>
+
+      <ng-container *ngIf="modoCrear()">
+        <label class="label" for="clave2">Confirmar clave</label>
+        <input id="clave2" type="password" formControlName="clave2" autocomplete="new-password" />
+      </ng-container>
+
+      <button class="cta" type="submit" [disabled]="cargando()">
+        {{ modoCrear() ? 'Crear clave' : 'Ingresar' }}
+      </button>
+
+      <button class="link-btn" type="button" (click)="abrirRecuperacion()" [disabled]="cargando()">
+        ¿Olvidaste la clave? Recuperar
+      </button>
+    </form>
+  </div>
+</section>
+
+<ng-template #sinNit>
+  <div class="acceso-shell">
+    <div class="acceso-card">
+      <p class="lead">No se proporcionó NIT.</p>
+    </div>
+  </div>
+</ng-template>
+
+<app-recuperar-clave-dialog
+  *ngIf="mostrarRecuperacion() && nit()"
+  [nit]="nit()"
+  (cerrar)="cerrarRecuperacion()"
+  (claveRestablecida)="onClaveRestablecida($event)"
+></app-recuperar-clave-dialog>

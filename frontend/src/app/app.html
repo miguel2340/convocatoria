@@ -1,0 +1,51 @@
+<div class="shell">
+  <div class="bg-gradient"></div>
+  <div class="bg-circles">
+    <ul class="circles">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+  </div>
+  <div class="bg-shapes">
+    <span class="shape shape--1"></span>
+    <span class="shape shape--2"></span>
+    <span class="shape shape--3"></span>
+    <span class="shape shape--4"></span>
+  </div>
+  <header class="shell__header">
+    <div class="header-left">
+      <div class="brand">
+        <div class="brand__mark">
+          <img src="/logo.png" alt="FOMAG" class="brand__logo-img" />
+        </div>
+        <div class="brand__text">
+          <span class="brand__title">{{ brandTitle() }}</span>
+          <span class="brand__subtitle">{{ brandSubtitle() }}</span>
+        </div>
+      </div>
+      <nav class="switcher">
+        <button routerLink="/" [class.is-active]="activeTab() === 'convocatoria'">Convocatoria</button>
+        <button routerLink="/pagos" [class.is-active]="activeTab() === 'pagos'">Proceso de pagos</button>
+      </nav>
+    </div>
+    <div class="badge">2026</div>
+  </header>
+
+  <main class="shell__main">
+    <router-outlet />
+  </main>
+
+  <footer class="shell__footer">
+    <span>Plataforma de convocatoria pública</span>
+    <span class="dot"></span>
+    <span>Soporte: mesa@fomag.gov</span>
+  </footer>
+</div>

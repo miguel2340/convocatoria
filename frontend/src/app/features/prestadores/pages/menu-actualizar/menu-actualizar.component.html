@@ -1,0 +1,21 @@
+<section class="menu-shell">
+  <div class="menu-card">
+    <h2>Actualizar datos</h2>
+    <p class="lead">NIT: <strong>{{ nit || 'N/D' }}</strong> <span *ngIf="nombre">/ {{ nombre }}</span></p>
+
+    <div class="menu-grid">
+      <button class="card-option" type="button" (click)="irRepresentante()">
+        <div class="card-option__icon persona"></div>
+        <div class="card-option__label">Actualizar representante legal</div>
+      </button>
+      <button class="card-option" type="button" (click)="irAtencion()">
+        <div class="card-option__icon atencion"></div>
+        <div class="card-option__label">Actualizar datos de atención al usuario</div>
+      </button>
+    </div>
+
+    <div class="volver">
+      <a routerLink="/gestion" [queryParams]="{ nit: nit, nombre: nombre }">← Volver al menú</a>
+    </div>
+  </div>
+</section>

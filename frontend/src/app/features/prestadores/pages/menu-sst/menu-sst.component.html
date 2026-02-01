@@ -1,0 +1,83 @@
+<section class="menu-shell">
+  <div class="menu-card">
+    <h2>Menú SST</h2>
+    <p class="lead">NIT: <strong>{{ nit || 'N/D' }}</strong> <span *ngIf="nombre">/ {{ nombre }}</span></p>
+
+    <div class="menu-grid">
+      <button class="card-option" type="button" (click)="toggleSedes()">
+        <div class="card-option__icon sede"></div>
+        <div class="card-option__label">Gestionar sedes</div>
+      </button>
+      <button class="card-option" type="button" (click)="irRegistrarSede()">
+        <div class="card-option__icon add"></div>
+        <div class="card-option__label">Registrar sede nueva</div>
+      </button>
+      <button class="card-option" type="button" (click)="irMenuSalud()">
+        <div class="card-option__icon salud"></div>
+        <div class="card-option__label">Menú convocatoria salud</div>
+      </button>
+      <button class="card-option" type="button" (click)="toggleSoportes()">
+        <div class="card-option__icon archivos"></div>
+        <div class="card-option__label">Administrar soportes</div>
+      </button>
+    </div>
+
+    <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+
+    <div class="panel" *ngIf="mostrarSedes()">
+      <div *ngIf="loadingSedes()">Cargando sedes SST...</div>
+      <div class="panel__title" *ngIf="!loadingSedes() && sedes().length">Sedes SST registradas</div>
+      <div *ngIf="!loadingSedes() && !sedes().length" class="text-muted">No hay sedes SST registradas.</div>
+      <ul class="sede-list" *ngIf="!loadingSedes() && sedes().length">
+        <li *ngFor="let sede of sedes()">
+          <div class="sede-main">
+            <div class="sede-dir">{{ sede.direccion }}</div>
+            <div class="sede-meta">Depto: {{ sede.departamentoId }} · Mpio: {{ sede.municipioId }}</div>
+            <div class="sede-meta" *ngIf="sede.codigoPostal">Cód. Postal: {{ sede.codigoPostal }}</div>
+            <div class="sede-meta" *ngIf="sede.serviciosSst">Servicios: {{ sede.serviciosSst }}</div>
+            <div class="sede-meta" *ngIf="sede.fechaRegistro">Registrada: {{ sede.fechaRegistro | date:'short' }}</div>
+          </div>
+          <button class="btn-link" type="button" (click)="editarSede(sede)">Editar</button>
+        </li>
+      </ul>
+
+      <div class="panel edit-panel" *ngIf="editando()">
+        <div class="panel__title">Editar sede: {{ editando()?.direccion }}</div>
+        <div class="servicios-grid">
+          <label *ngFor="let s of serviciosSst()">
+            <input type="checkbox" [checked]="serviciosSeleccionados()[s]" (change)="toggleServicio(s)" />
+            {{ s }}
+          </label>
+        </div>
+        <div class="actions">
+          <button class="btn-link" type="button" (click)="guardarEdicion()">Guardar</button>
+          <button class="btn-link cancel" type="button" (click)="cancelarEdicion()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" *ngIf="mostrarSoportes()">
+      <div class="panel__title soportes-header">
+        <span>Soportes SST</span>
+        <label class="btn-link">
+          Adjuntar archivos
+          <input type="file" multiple (change)="seleccionarArchivos($event)" hidden />
+        </label>
+      </div>
+      <div *ngIf="loadingArchivos()">Cargando soportes...</div>
+      <div *ngIf="!loadingArchivos() && !archivos().length" class="text-muted">No hay archivos cargados.</div>
+      <ul class="file-list" *ngIf="!loadingArchivos() && archivos().length">
+        <li *ngFor="let file of archivos()">
+          <span>{{ file.nombre }}</span>
+          <span class="file-meta">{{ file.tamano | number }} bytes</span>
+          <button class="btn-link" type="button" (click)="eliminarArchivo(file.nombre)">Eliminar</button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="volver">
+      <a routerLink="/" [queryParams]="{ nit: nit, nombre: nombre }">← Volver al inicio</a>
+    </div>
+  </div>
+</section>
+

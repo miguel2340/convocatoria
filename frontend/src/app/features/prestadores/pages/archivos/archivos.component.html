@@ -1,0 +1,38 @@
+<section class="archivos-shell">
+  <div class="archivos-card">
+    <div class="header">
+      <div>
+        <p class="eyebrow">Soportes</p>
+        <h2>Anexar archivos</h2>
+        <p class="lead">NIT: <strong>{{ nit }}</strong> <span *ngIf="nombre">/ {{ nombre }}</span></p>
+      </div>
+      <div class="actions">
+        <input type="file" #fileInput multiple hidden (change)="subir($event)" />
+        <button class="cta-secondary" type="button" (click)="fileInput.click()" [disabled]="uploading() || !nit">
+          {{ uploading() ? 'Cargando...' : 'Adjuntar' }}
+        </button>
+        <button class="cta-secondary" type="button" (click)="volverMenu()">Volver al menú</button>
+      </div>
+    </div>
+
+    <div class="state" *ngIf="loading()">Cargando soportes...</div>
+    <div class="state error" *ngIf="error()">{{ error() }}</div>
+    <div class="state success" *ngIf="success()">{{ success() }}</div>
+
+    <div class="lista" *ngIf="archivos().length">
+      <div class="file" *ngFor="let file of archivos()">
+        <div>
+          <p class="file__name">{{ file.nombre }}</p>
+          <p class="file__meta">
+            {{ (file.tamano / 1024 | number:'1.0-0') }} KB · {{ file.modificado }}
+          </p>
+        </div>
+        <button class="cta-secondary danger" type="button" (click)="eliminar(file.nombre)" [disabled]="loading()">
+          Eliminar
+        </button>
+      </div>
+    </div>
+
+    <p class="hint" *ngIf="!archivos().length && !loading()">No hay archivos cargados.</p>
+  </div>
+</section>

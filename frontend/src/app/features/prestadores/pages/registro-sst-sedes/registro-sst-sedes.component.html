@@ -1,0 +1,139 @@
+<section class="registro-sedes">
+  <div class="card">
+    <div class="card__header">
+      <div>
+        <p class="eyebrow">Paso 2 · Registro de sedes (SST)</p>
+        <h2>{{ contexto['nombre'] || 'Prestador' }}</h2>
+        <p class="lead">NIT: <strong>{{ contexto['nit'] }}</strong></p>
+      </div>
+      <button class="cta-secondary" type="button" routerLink="/convocatoria-salud" [queryParams]="{ nit: contexto['nit'], nombre: contexto['nombre'] }">
+        Volver
+      </button>
+    </div>
+
+    <div class="state error" *ngIf="error()">{{ error() }}</div>
+    <div class="state success" *ngIf="success()">{{ success() }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="soportes">
+        <div>
+          <p class="hint">Adjunta los soportes del NIT antes de registrar las sedes.</p>
+          <p class="hint" *ngIf="soportesOk()">Archivos detectados correctamente.</p>
+        </div>
+        <div class="soportes__actions">
+          <button type="button" class="cta-secondary" (click)="abrirModalSoportes()">
+            Adjuntar documentos
+          </button>
+        </div>
+      </div>
+
+      <div formArrayName="sedes" class="sedes">
+        <div class="sede" *ngFor="let sede of sedesArray.controls; let i = index" [formGroupName]="i">
+          <div class="sede__head">
+            <h3>Sede {{ i + 1 }}</h3>
+            <button type="button" class="cta-secondary" (click)="eliminarSede(i)" [disabled]="sedesArray.length === 1">Eliminar</button>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Tipo de vía</span>
+              <select formControlName="tipoVia">
+                <option value="">Seleccione</option>
+                @for (tipo of tiposVia(); track tipo) {
+                  <option [value]="tipo">{{ tipo }}</option>
+                }
+              </select>
+            </label>
+            <label class="field">
+              <span>Número de vía</span>
+              <input type="text" formControlName="numeroVia" />
+            </label>
+            <label class="field">
+              <span>Letra (opcional)</span>
+              <input type="text" formControlName="letraVia" />
+            </label>
+            <label class="field">
+              <span>Número de placa</span>
+              <input type="text" formControlName="numeroPlaca" />
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label class="field">
+              <span>Departamento</span>
+              <select formControlName="departamentoId" (change)="cargarMunicipios(i, sede.get('departamentoId')?.value)">
+                <option value="">Seleccione</option>
+                @for (dep of departamentos(); track dep.id) {
+                  <option [value]="dep.id">{{ dep.nombre }}</option>
+                }
+              </select>
+            </label>
+            <label class="field">
+              <span>Municipio</span>
+              <select formControlName="municipioId">
+                <option value="">Seleccione</option>
+                @for (mun of municipiosPorSede()[i] ?? []; track mun.id) {
+                  <option [value]="mun.id">{{ mun.nombre }}</option>
+                }
+              </select>
+            </label>
+          </div>
+
+          <div class="fieldset">
+            <p class="fieldset__title">Servicios SST</p>
+            <div class="checks" formGroupName="servicios">
+              @for (serv of serviciosSst(); track serv) {
+                <label class="check">
+                  <input type="checkbox" [formControlName]="serv" />
+                  <span>{{ serv }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <label class="field">
+            <span>Código postal (opcional)</span>
+            <input type="text" formControlName="codigoPostal" />
+          </label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="cta-secondary" (click)="agregarSede()">Agregar otra sede</button>
+        <button type="submit" class="cta" [disabled]="loading()">
+          {{ loading() ? 'Guardando...' : 'Registrar sedes SST' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="modalSoportes()">
+    <div class="modal">
+      <div class="modal__header">
+        <h3>Adjuntar soportes SST</h3>
+        <button type="button" class="close-btn" (click)="cerrarModalSoportes()">✕</button>
+      </div>
+      <p class="modal__step">Documento {{ docIndex() + 1 }} de {{ totalDocs() }}</p>
+      <div class="modal__body">
+        <p class="modal__category">{{ docActual()?.categoria }}</p>
+        <p class="modal__title">{{ docActual()?.nombre }}</p>
+        <label class="upload-box">
+          <input type="file" (change)="onDocFileSelected($event)" [disabled]="docSubiendo()" />
+          <span *ngIf="!docSubiendo()">Selecciona el archivo</span>
+          <span *ngIf="docSubiendo()">Cargando...</span>
+        </label>
+        <div class="state success" *ngIf="docMensaje()">{{ docMensaje() }}</div>
+        <div class="state error" *ngIf="docError()">{{ docError() }}</div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="cta-secondary" (click)="anteriorDoc()" [disabled]="docSubiendo() || docIndex() === 0">
+          Atrás
+        </button>
+        <button type="button" class="cta-secondary" (click)="siguienteDoc()" [disabled]="docSubiendo()">
+          Siguiente
+        </button>
+        <button type="button" class="cta-secondary" (click)="cerrarModalSoportes()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</section>

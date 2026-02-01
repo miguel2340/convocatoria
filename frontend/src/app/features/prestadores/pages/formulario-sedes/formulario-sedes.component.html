@@ -1,0 +1,280 @@
+<section class="datos-shell">
+  <div class="datos-card">
+    <div class="card-header">
+      <div>
+        <p class="eyebrow">Paso 2 - Formularios por sede</p>
+        <h2>Datos de atención a usuarios</h2>
+        <p class="lead">
+          NIT: <strong>{{ contexto?.nit }}</strong>
+          <span *ngIf="contexto?.nombre">/ {{ contexto?.nombre }}</span>
+        </p>
+      </div>
+      <button class="cta-secondary" type="button" routerLink="/registro-servicios" [queryParams]="{ nit: contexto?.nit }">
+        Volver
+      </button>
+    </div>
+
+    <div class="state error" *ngIf="error()">{{ error() }}</div>
+    <div class="state success" *ngIf="success()">{{ success() }}</div>
+
+    <ng-container *ngIf="contexto && sedesFormArray.controls.length; else sinSedes">
+      <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+        <div formArrayName="sedes" class="sedes">
+          <div class="sede-card" *ngFor="let sede of sedesFormArray.controls; let i = index" [formGroupName]="i">
+            <header class="sede-card__head" (click)="toggleSede(sede.get('codHabilitacion')?.value)">
+              <div>
+                <p class="sede-title">
+                  {{ sede.get('codHabilitacion')?.value }} -
+                  {{ sede.get('departamento')?.value }}, {{ sede.get('municipio')?.value }}
+                </p>
+                <p class="sede-address">{{ sede.get('direccion')?.value }}</p>
+                <div class="chips" *ngIf="sedesSeleccionadas[i]?.servicios?.length">
+                  <span class="chip" *ngFor="let serv of sedesSeleccionadas[i].servicios">
+                    {{ serv.nombre }}
+                  </span>
+                </div>
+              </div>
+              <span class="toggle">{{ abiertas()[sede.get('codHabilitacion')?.value] ? '-' : '+' }}</span>
+            </header>
+
+            <div class="sede-card__body" *ngIf="abiertas()[sede.get('codHabilitacion')?.value]">
+              <p class="sede-hint">Selecciona los servicios y completa los datos requeridos para esta sede.</p>
+
+              <div class="fieldset" formGroupName="tipoServicio">
+                <p class="fieldset__title">Tipo de servicio</p>
+                <div class="checks">
+                  <label class="check">
+                    <input type="checkbox" formControlName="Ambulatorio" />
+                    <span>Ambulatorio</span>
+                  </label>
+                  <label class="check">
+                    <input type="checkbox" formControlName="Hospitalario" />
+                    <span>Hospitalario</span>
+                  </label>
+                  <label class="check">
+                    <input type="checkbox" formControlName="Domiciliario" />
+                    <span>Domiciliario</span>
+                  </label>
+                  <label class="check">
+                    <input type="checkbox" formControlName="Transporte" />
+                    <span>Transporte</span>
+                  </label>
+                  <label class="check">
+                    <input type="checkbox" formControlName="Insumos" />
+                    <span>Insumos / Dispositivos</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="fieldset exclusividad">
+                <p class="fieldset__title">Mecanismos de exclusividad</p>
+                <label class="check">
+                  <input type="checkbox" formControlName="servicioExclusivo" />
+                  <span>Sede totalmente exclusiva</span>
+                </label>
+                <label class="check">
+                  <input type="checkbox" formControlName="servicioAgenda" />
+                  <span>Asignación de agenda especial o priorizada</span>
+                </label>
+                <label class="check">
+                  <input type="checkbox" formControlName="servicioFranjas" />
+                  <span>Atención exclusiva en franjas horarias</span>
+                </label>
+              </div>
+
+              <div class="fieldset">
+                <p class="fieldset__title">Mecanismos y canales para asignación de citas</p>
+                <select class="select" formControlName="mecanismoCitas">
+                  <option value="">Seleccione...</option>
+                  <option value="Presencial">Presencial</option>
+                  <option value="No Presencial">No Presencial</option>
+                  <option value="Ambos">Ambos</option>
+                </select>
+              </div>
+
+              <div
+                class="panel"
+                formGroupName="horariosPresencial"
+                *ngIf="mecanismoActual(i) === 'Presencial' || mecanismoActual(i) === 'Ambos'"
+              >
+                <p class="panel__title">Horarios de atención para citas presenciales</p>
+                <div class="grid two">
+                  <label class="field">
+                    <span>Desde</span>
+                    <input type="time" formControlName="desde" />
+                  </label>
+                  <label class="field">
+                    <span>Hasta</span>
+                    <input type="time" formControlName="hasta" />
+                  </label>
+                </div>
+              </div>
+
+              <div
+                class="panel"
+                formGroupName="canalesNoPresencial"
+                *ngIf="mecanismoActual(i) === 'No Presencial' || mecanismoActual(i) === 'Ambos'"
+              >
+                <p class="panel__title">Canales no presenciales</p>
+                <div class="grid two">
+                  <label class="field">
+                    <span>WhatsApp</span>
+                    <input type="text" formControlName="whatsapp" placeholder="Solo números" />
+                  </label>
+                  <div class="field subgrid">
+                    <span>Horario WhatsApp</span>
+                    <div class="grid two tight">
+                      <label class="field-inline">
+                        <span>Desde</span>
+                        <input type="time" formControlName="whatsappDesde" />
+                      </label>
+                      <label class="field-inline">
+                        <span>Hasta</span>
+                        <input type="time" formControlName="whatsappHasta" />
+                      </label>
+                    </div>
+                  </div>
+                  <label class="field">
+                    <span>Línea telefónica</span>
+                    <input type="text" formControlName="telefono" placeholder="Solo números" />
+                  </label>
+                  <div class="field subgrid">
+                    <span>Horario telefónico</span>
+                    <div class="grid two tight">
+                      <label class="field-inline">
+                        <span>Desde</span>
+                        <input type="time" formControlName="telefonoDesde" />
+                      </label>
+                      <label class="field-inline">
+                        <span>Hasta</span>
+                        <input type="time" formControlName="telefonoHasta" />
+                      </label>
+                    </div>
+                  </div>
+                  <label class="field">
+                    <span>Página web</span>
+                    <input type="text" formControlName="paginaWeb" placeholder="https://..." />
+                  </label>
+                  <label class="field">
+                    <span>Correo electrónico</span>
+                    <input type="email" formControlName="correo" placeholder="contacto@dominio.com" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="panel" formGroupName="gerente" *ngIf="debeMostrarGerente(tiposSeleccionados(i))">
+                <p class="panel__title">Gerente / Director científico</p>
+                <div class="grid names">
+                  <label class="field">
+                    <span>Primer nombre</span>
+                    <input type="text" formControlName="nombre1" />
+                  </label>
+                  <label class="field">
+                    <span>Segundo nombre</span>
+                    <input type="text" formControlName="nombre2" />
+                  </label>
+                  <label class="field">
+                    <span>Primer apellido</span>
+                    <input type="text" formControlName="apellido1" />
+                  </label>
+                  <label class="field">
+                    <span>Segundo apellido</span>
+                    <input type="text" formControlName="apellido2" />
+                  </label>
+                </div>
+                <div class="grid two">
+                  <label class="field">
+                    <span>Correo autorizado para trámites de atención</span>
+                    <input type="email" formControlName="correoAutorizado" />
+                  </label>
+                  <label class="field">
+                    <span>Teléfono fijo autorizado</span>
+                    <input type="text" formControlName="telefonoFijo" placeholder="Solo números" />
+                  </label>
+                  <label class="field">
+                    <span>Celular autorizado</span>
+                    <input type="text" formControlName="celular" placeholder="Solo números" />
+                  </label>
+                  <label class="field">
+                    <span>Correo gerente/director</span>
+                    <input type="email" formControlName="correoGerente" />
+                  </label>
+                  <label class="field">
+                    <span>Celular gerente/director</span>
+                    <input type="text" formControlName="celularGerente" placeholder="Solo números" />
+                  </label>
+                  <label class="field">
+                    <span>Correo trámite administrativo</span>
+                    <input type="email" formControlName="correoAdministrativo" />
+                  </label>
+                  <label class="field">
+                    <span>Teléfono trámite administrativo</span>
+                    <input type="text" formControlName="telefonoAdministrativo" placeholder="Solo números" />
+                  </label>
+                  <label class="field">
+                    <span>Celular trámite administrativo</span>
+                    <input type="text" formControlName="celularAdministrativo" placeholder="Solo números" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="panel" formGroupName="coordinador" *ngIf="debeMostrarCoordinador(tiposSeleccionados(i))">
+                <p class="panel__title">Coordinador de referencia y contrarreferencia</p>
+                <div class="grid names">
+                  <label class="field">
+                    <span>Primer nombre</span>
+                    <input type="text" formControlName="nombre1" />
+                  </label>
+                  <label class="field">
+                    <span>Segundo nombre</span>
+                    <input type="text" formControlName="nombre2" />
+                  </label>
+                  <label class="field">
+                    <span>Primer apellido</span>
+                    <input type="text" formControlName="apellido1" />
+                  </label>
+                  <label class="field">
+                    <span>Segundo apellido</span>
+                    <input type="text" formControlName="apellido2" />
+                  </label>
+                </div>
+                <div class="grid two">
+                  <label class="field">
+                    <span>Teléfono de contacto</span>
+                    <input type="text" formControlName="telefono" placeholder="Solo números" />
+                  </label>
+                  <label class="field">
+                    <span>Correo de contacto</span>
+                    <input type="email" formControlName="correo" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="sede-error" *ngIf="sedeErrors()[sede.get('codHabilitacion')?.value]">
+                {{ sedeErrors()[sede.get('codHabilitacion')?.value] }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="cta-secondary" type="button" routerLink="/registro-servicios" [queryParams]="{ nit: contexto?.nit }">
+            Atrás
+          </button>
+          <button class="cta" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Enviando...' : 'Enviar información por sedes' }}
+          </button>
+        </div>
+      </form>
+    </ng-container>
+
+    <ng-template #sinSedes>
+      <div class="state">
+        No hay sedes seleccionadas para diligenciar. Regresa al paso de selección de servicios.
+      </div>
+      <div class="actions">
+        <button class="cta-secondary" type="button" routerLink="/registro-servicios">Ir a selección</button>
+      </div>
+    </ng-template>
+  </div>
+</section>

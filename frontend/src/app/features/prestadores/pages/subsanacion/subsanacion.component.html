@@ -1,0 +1,73 @@
+<section class="subs-shell">
+  <div class="subs-card">
+    <div class="header">
+      <div>
+        <p class="eyebrow">Subsanación</p>
+        <h2>Evaluación y cargue de soportes</h2>
+        <p class="lead">NIT: <strong>{{ nit }}</strong> <span *ngIf="nombre">/ {{ nombre }}</span></p>
+        <div class="etapa" *ngIf="etapa">
+          Etapa: <strong>{{ etapa === 'PRIMERA' ? 'Primera' : 'Segunda' }}</strong>
+        </div>
+      </div>
+      <div class="actions">
+        <input type="file" #fileInput multiple hidden (change)="onFilesSelected($event)" />
+        <button class="cta-secondary" type="button" (click)="fileInput.click()" [disabled]="uploading() || !nit">
+          {{ uploading() ? 'Cargando...' : 'Adjuntar soportes' }}
+        </button>
+        <button class="cta-secondary" type="button" (click)="volverMenu()">Volver al menú</button>
+      </div>
+    </div>
+
+    <div class="state" *ngIf="loadingEval()">Cargando evaluación...</div>
+    <div class="state error" *ngIf="error()">{{ error() }}</div>
+    <div class="state success" *ngIf="success()">{{ success() }}</div>
+
+    <div class="tabla" *ngIf="items().length">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Número</th>
+            <th>Documento a revisar</th>
+            <th>Descripción</th>
+            <th>Resultado</th>
+            <th>Fecha evaluación</th>
+            <th>Observación</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (it of items(); track it.numero + it.tipoCalificacion) {
+            <tr>
+              <td>{{ it.tipoCalificacion }}</td>
+              <td>{{ it.numero }}</td>
+              <td>{{ it.documentoRevisar }}</td>
+              <td>{{ it.descripcion }}</td>
+              <td>{{ it.resultado }}</td>
+              <td>{{ it.fechaEvaluacion }}</td>
+              <td>{{ it.observacion }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <p class="hint" *ngIf="!items().length && !loadingEval()">No tiene calificaciones con resultado NO CUMPLE registradas.</p>
+
+    <div class="soportes">
+      <h3>Soportes de subsanación</h3>
+      <div class="state" *ngIf="loadingFiles()">Cargando archivos...</div>
+      <div class="lista" *ngIf="archivos().length">
+        <div class="file" *ngFor="let file of archivos()">
+          <div>
+            <p class="file__name">{{ file.nombre }}</p>
+            <p class="file__meta">{{ (file.tamano / 1024 | number:'1.0-0') }} KB · {{ file.modificado }}</p>
+          </div>
+          <button class="cta-secondary danger" type="button" (click)="eliminar(file.nombre)" [disabled]="loadingFiles()">
+            Eliminar
+          </button>
+        </div>
+      </div>
+      <p class="hint" *ngIf="!archivos().length && !loadingFiles()">No hay archivos cargados.</p>
+    </div>
+  </div>
+</section>

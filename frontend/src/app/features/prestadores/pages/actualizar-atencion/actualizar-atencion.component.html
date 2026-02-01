@@ -1,0 +1,28 @@
+<section class="menu-shell">
+  <div class="menu-card">
+    <h2>Actualizar atención al usuario</h2>
+    <p class="lead">NIT: <strong>{{ nit || 'N/D' }}</strong> <span *ngIf="nombre">/ {{ nombre }}</span></p>
+
+    <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+    <div *ngIf="loading()">Cargando sedes...</div>
+
+    <ul class="sedes-lista" *ngIf="!loading() && sedes().length">
+      <li class="sede-box" *ngFor="let sede of sedes()">
+        <div class="sede-datos">
+          <strong>Cod. Habilitación:</strong> {{ sede.codHabilitacion }}
+          <span class="badge" [ngClass]="badge(sede.estado).clase">{{ badge(sede.estado).texto }}</span><br />
+          <strong>Dirección:</strong> {{ sede.direccion || 'N/D' }}<br />
+          <strong>Departamento:</strong> {{ sede.departamento || 'N/D' }}<br />
+          <strong>Municipio:</strong> {{ sede.municipio || 'N/D' }}<br />
+        </div>
+        <button class="btn" type="button" (click)="irEditar(sede)">
+          {{ sede.estado === 'SEDE_NUEVA' ? 'Crear sede' : 'Actualizar atención usuario' }}
+        </button>
+      </li>
+    </ul>
+
+    <div class="volver">
+      <a routerLink="/actualizar-datos" [queryParams]="{ nit: nit, nombre: nombre }">← Volver al submenú</a>
+    </div>
+  </div>
+</section>

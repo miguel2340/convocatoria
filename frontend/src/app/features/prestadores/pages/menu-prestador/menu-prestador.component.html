@@ -1,0 +1,37 @@
+<section class="menu-shell">
+  <div class="menu-card">
+    <h2>Gestión del Prestador</h2>
+    <p class="lead">NIT: <strong>{{ nit || 'N/D' }}</strong> <span *ngIf="nombre">/ {{ nombre }}</span></p>
+
+    <div class="menu-grid">
+      <button class="card-option" type="button" (click)="irActualizarDatos()">
+        <div class="card-option__icon persona"></div>
+        <div class="card-option__label">Actualizar datos</div>
+      </button>
+      <button class="card-option" type="button" (click)="irAgregarServicios()">
+        <div class="card-option__icon sede"></div>
+        <div class="card-option__label">Agregar sede o servicios</div>
+      </button>
+      <button class="card-option" type="button" (click)="irArchivos()">
+        <div class="card-option__icon archivos"></div>
+        <div class="card-option__label">Anexar archivos</div>
+      </button>
+      <button class="card-option" type="button" (click)="irSubsanacion()">
+        <div class="card-option__icon check"></div>
+        <div class="card-option__label">Subsanación</div>
+      </button>
+      <button class="card-option" type="button" (click)="irSst()">
+        <div class="card-option__icon sst"></div>
+        <div class="card-option__label">
+          {{ tieneSst() ? 'Ir a menu SST' : 'Registrar SST' }}
+        </div>
+      </button>
+    </div>
+
+    <div class="volver">
+      <a routerLink="/">← Volver al inicio</a>
+    </div>
+  </div>
+</section>
+
+

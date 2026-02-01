@@ -1,0 +1,165 @@
+<section class="layout" *ngIf="!esPagos">
+  <div class="panel panel--hero">
+    <p class="eyebrow">Convocatoria publica</p>
+    <h1>Buscar prestador por NIT</h1>
+    <p class="lead">
+      Consulta la existencia en el registro calificado y continua con la actualizacion o inscripcion de tus datos.
+    </p>
+
+    <div class="tags">
+      <span class="tag">Validacion en linea</span>
+      <span class="tag">Tratamiento de datos Ley 1581</span>
+    </div>
+  </div>
+
+  <div class="panel panel--form">
+    <div class="state success" *ngIf="successFlash()">
+      {{ successFlash() }}
+    </div>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="nit" class="label">NIT del prestador</label>
+      <div class="input-row">
+        <input
+          id="nit"
+          type="text"
+          inputmode="numeric"
+          placeholder="Ej. 901234567"
+          autocomplete="off"
+          formControlName="nit"
+        />
+        <button class="cta" type="submit">Buscar</button>
+      </div>
+      <div class="hint error" *ngIf="isInvalid()">Ingresa un NIT valido (solo numeros, 5-15 digitos).</div>
+      <div class="hint">Al continuar aceptas el tratamiento de datos personales.</div>
+
+      <div class="extra-field" *ngIf="status() === 'not-found'">
+        <label for="nombre" class="label">Nombre del prestador (para crear registro)</label>
+        <input id="nombre" type="text" formControlName="nombre" placeholder="Escribe el nombre completo" />
+        <div class="hint">Requerido para crear un registro nuevo.</div>
+      </div>
+    </form>
+
+    <div class="state" *ngIf="status() === 'loading'">Consultando...</div>
+
+    <div class="state found" *ngIf="status() === 'found' && prestador()">
+      <p class="eyebrow">Prestador encontrado</p>
+      <h3>{{ prestador()?.nombre }}</h3>
+      <p>NIT: <strong>{{ prestador()?.nit }}</strong></p>
+      <p *ngIf="prestador()?.clasePrestador">Clase: {{ prestador()?.clasePrestador }}</p>
+      <p class="hint" *ngIf="message()">{{ message() }}</p>
+
+      <ng-container *ngIf="existeEnRegistro(); else opcionesActualizar">
+        <button type="button" class="cta-secondary" (click)="irAVerificacion()">
+          Ir a verificacion
+        </button>
+      </ng-container>
+
+      <ng-template #opcionesActualizar>
+        <div class="submenu">
+          <div class="submenu__title">Selecciona el tipo de registro</div>
+          <div class="submenu__actions">
+            <button type="button" class="cta-secondary" (click)="irAConvocatoriaSalud()">Convocatoria de salud</button>
+            <button type="button" class="cta-secondary" (click)="irASst()">S.S.T</button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="state not-found" *ngIf="status() === 'not-found'">
+      <p class="eyebrow">No encontrado</p>
+      <p>{{ message() }}</p>
+      <div class="submenu__actions">
+        <button type="button" class="cta-secondary" (click)="irARegistroNuevo()">Crear registro</button>
+        <button type="button" class="cta-secondary" (click)="irARegistroNuevoSst()">Crear registro SST</button>
+      </div>
+    </div>
+
+    <div class="state error" *ngIf="status() === 'error'">
+      <p class="eyebrow">Error al consultar</p>
+      <p>{{ message() }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="layout layout--payments" id="pagos-section" #pagosSection *ngIf="esPagos">
+  <div class="panel panel--info panel--payments">
+    <p class="eyebrow">Estado global</p>
+    <div class="payments__header">
+      <h1>Proceso de pagos</h1>
+      <span class="chip chip--muted">Vista general</span>
+    </div>
+    <p class="lead">
+      Consulta por NIT y fecha el pago del periodo determinado. Para mas detalle sera necesario iniciar sesion.
+    </p>
+    <div class="payments__details">
+      <div class="detail">
+        <span class="detail__title">Consulta rapida</span>
+        <span class="detail__desc">Valida  el pago de un periodo.</span>
+      </div>
+      <div class="detail">
+        <span class="detail__title">Profundiza</span>
+        <span class="detail__desc">Accede autenticado para ver el detalle factura a factura</span>
+      </div>
+    </div>
+    <div class="hint">Disponible para busqueda publica; el detalle requiere sesion.</div>
+  </div>
+
+  <div class="panel panel--form panel--payments-form">
+    <div class="state" *ngIf="pagoStatus() === 'loading'">Consultando pagos...</div>
+    <div class="state success" *ngIf="pagoStatus() === 'ok'">{{ pagoMensaje() }}</div>
+    <div class="state error" *ngIf="pagoStatus() === 'error'">{{ pagoMensaje() }}</div>
+
+    <form class="form" [formGroup]="pagosForm" (ngSubmit)="consultarPago()" novalidate>
+      <label for="nit-pagos" class="label">NIT del prestador</label>
+      <div class="input-row">
+        <input
+          id="nit-pagos"
+          type="text"
+          inputmode="numeric"
+          placeholder="Ej. 901234567"
+          autocomplete="off"
+          formControlName="nit"
+        />
+      </div>
+      <div class="hint error" *ngIf="pagoNitInvalido()">Ingresa un NIT valido (solo numeros, 5-15 digitos).</div>
+
+      <label for="periodo" class="label">Periodo de pago</label>
+      <input id="periodo" type="month" formControlName="periodo" />
+      <div class="hint error" *ngIf="periodoInvalido()">Selecciona un periodo.</div>
+
+      <div class="hint">
+        Consulta publica contra la base de pagos (fomagf). El detalle requerira el login de pagos con clave_nit.
+      </div>
+
+      <button class="cta" type="submit">Consultar pagos</button>
+    </form>
+
+    <div class="pago-resumen" *ngIf="pagoResultado()">
+      <div class="pago-resumen__item">
+        <span class="label-small">NIT</span>
+        <span class="value">{{ pagoResultado()?.nit }}</span>
+      </div>
+      <div class="pago-resumen__item" *ngIf="pagoResultado()?.nomPrestador">
+        <span class="label-small">Prestador</span>
+        <span class="value">{{ pagoResultado()?.nomPrestador }}</span>
+      </div>
+      <div class="pago-resumen__item">
+        <span class="label-small">Periodo</span>
+        <span class="value">
+          {{ pagoResultado()?.anio }}-{{ pagoResultado()?.mes | number: '2.0-0' }}
+        </span>
+      </div>
+      <div class="pago-resumen__item">
+        <span class="label-small">Total pagado</span>
+        <span class="value value--strong">
+          {{ pagoResultado()?.totalValorPagado | currency: 'COP':'symbol-narrow':'1.0-0' }}
+        </span>
+      </div>
+    </div>
+
+    <button class="cta-secondary" type="button" *ngIf="pagoResultado()" (click)="irADetallePagos()">
+      Ver detalle (requiere inicio de sesion)
+    </button>
+  </div>
+</section>

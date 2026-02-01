@@ -1,0 +1,115 @@
+<section class="form-shell">
+  <div class="form-card">
+    <div class="form-header">
+      <div>
+        <p class="eyebrow">{{ isSst ? 'Convocatoria SST' : 'Convocatoria de salud' }}</p>
+        <h2>Actualización de datos</h2>
+        <p class="lead">NIT: <strong>{{ nit }}</strong> <span *ngIf="nombre">/ {{ nombre }}</span></p>
+      </div>
+      <button class="cta-secondary" type="button" routerLink="/">Volver</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="grid">
+        <label class="field" *ngIf="!isSst">
+          <span>Clase de Prestador</span>
+          <select formControlName="clasePrestador">
+            <option value="">Seleccione...</option>
+            @for (item of clases; track item) {
+              <option [value]="item">{{ item }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Teléfono Fijo (Contacto Administrativo)</span>
+          <input type="text" formControlName="telefonoFijo" placeholder="Ej. 1234567" />
+          <span class="hint error" *ngIf="form.controls.telefonoFijo.invalid && (form.controls.telefonoFijo.dirty || form.controls.telefonoFijo.touched)">
+            Ingrese entre 7 y 10 dígitos.
+          </span>
+        </label>
+
+        <label class="field">
+          <span>Celular (Contacto Administrativo)</span>
+          <input type="text" formControlName="celularAdmin" placeholder="Ej. 3012345678" />
+          <span class="hint error" *ngIf="form.controls.celularAdmin.invalid && (form.controls.celularAdmin.dirty || form.controls.celularAdmin.touched)">
+            Ingrese entre 7 y 10 dígitos.
+          </span>
+        </label>
+      </div>
+
+      <div class="grid two">
+        <div class="fieldset" formGroupName="adminEmails">
+          <p class="fieldset__title">Correo administrativo</p>
+          <label class="field">
+            <span>Correo</span>
+            <input type="email" formControlName="correo" placeholder="admin@dominio.com" />
+          </label>
+          <label class="field">
+            <span>Confirmar correo</span>
+            <input type="email" formControlName="confirm" placeholder="admin@dominio.com" />
+          </label>
+          <p class="hint error" *ngIf="form.get('adminEmails')?.errors?.['emailMismatch']">Los correos no coinciden.</p>
+        </div>
+
+        <div class="fieldset" formGroupName="representante">
+          <p class="fieldset__title">Representante legal</p>
+          <div class="grid names">
+            <label class="field">
+              <span>Primer nombre</span>
+              <input type="text" formControlName="primerNombre" />
+            </label>
+            <label class="field">
+              <span>Segundo nombre</span>
+              <input type="text" formControlName="segundoNombre" />
+            </label>
+            <label class="field">
+              <span>Primer apellido</span>
+              <input type="text" formControlName="primerApellido" />
+            </label>
+            <label class="field">
+              <span>Segundo apellido</span>
+              <input type="text" formControlName="segundoApellido" />
+            </label>
+          </div>
+          <label class="field">
+            <span>Correo representante</span>
+            <input type="email" formControlName="correo" placeholder="representante@dominio.com" />
+          </label>
+          <label class="field">
+            <span>Confirmar correo</span>
+            <input type="email" formControlName="correoConfirm" placeholder="representante@dominio.com" />
+            <span class="hint error" *ngIf="form.get('representante')?.errors?.['emailMismatch']">Los correos no coinciden.</span>
+          </label>
+          <label class="field">
+            <span>Celular representante</span>
+            <input type="text" formControlName="celular" placeholder="Ej. 3012345678" />
+            <span class="hint error" *ngIf="form.get('representante.celular')?.invalid && (form.get('representante.celular')?.dirty || form.get('representante.celular')?.touched)">
+              Ingrese entre 7 y 10 dígitos.
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="fieldset" formGroupName="categorias" *ngIf="mostrarCategorias">
+        <p class="fieldset__title">Seleccione categorías</p>
+        <label class="check">
+          <input type="checkbox" formControlName="transporte" />
+          <span>Transporte</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" formControlName="insumos" />
+          <span>Insumos y Dispositivos Médicos</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" formControlName="medicamentos" />
+          <span>Medicamentos</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="cta" type="submit">Continuar</button>
+      </div>
+    </form>
+  </div>
+</section>

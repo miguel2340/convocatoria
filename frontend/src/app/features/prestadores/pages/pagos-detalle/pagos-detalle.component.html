@@ -1,0 +1,23 @@
+<section class="pbi-shell">
+  <div class="pbi-header">
+    <div>
+      <div class="label">Reporte de pagos</div>
+      <div class="nit-line" *ngIf="nit()">
+        <h2 class="nit">NIT {{ nit() }}</h2>
+        <span class="prestador" *ngIf="prestadorNombre()">{{ prestadorNombre() }}</span>
+      </div>
+    </div>
+    <button class="cta-secondary" type="button" (click)="irAlBuscador()">Volver</button>
+  </div>
+
+  <div class="alert info" *ngIf="cargando()">Cargando Power BI...</div>
+  <div class="alert error" *ngIf="mensaje()">{{ mensaje() }}</div>
+
+  <div class="pbi-frame">
+    <div
+      #pbiContainer
+      class="pbi-container"
+      [class.is-hidden]="cargando() || !!mensaje()">
+    </div>
+  </div>
+</section>

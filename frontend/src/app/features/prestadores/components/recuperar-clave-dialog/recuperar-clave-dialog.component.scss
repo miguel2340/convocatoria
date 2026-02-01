@@ -1,0 +1,119 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 16px;
+}
+
+.dialog {
+  background: #fff;
+  border-radius: 12px;
+  width: min(720px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 20px 24px 28px;
+}
+
+.dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.dialog__title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.dialog__subtitle {
+  font-size: 12px;
+  color: #666;
+}
+
+.close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.alert {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.alert-error {
+  background: #ffe5e5;
+  color: #9d1b1b;
+}
+
+.info {
+  background: #e9f2ff;
+  color: #1c4a89;
+}
+
+.lead {
+  margin: 12px 0;
+  color: #333;
+}
+
+.pregunta,
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+label span {
+  font-weight: 600;
+}
+
+input,
+select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.acciones {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  background: #0f62fe;
+  color: #fff;
+  font-weight: 600;
+}
+
+button.ghost {
+  background: #f4f4f4;
+  color: #111;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hint.error {
+  color: #b30000;
+  font-size: 12px;
+}

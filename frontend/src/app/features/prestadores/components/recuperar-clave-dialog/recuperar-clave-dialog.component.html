@@ -1,0 +1,79 @@
+<div class="overlay">
+  <div class="dialog">
+    <header class="dialog__header">
+      <div>
+        <div class="dialog__title">Recuperar clave</div>
+        <div class="dialog__subtitle">NIT {{ nit }}</div>
+      </div>
+      <button class="close" type="button" (click)="cerrarDialogo()">×</button>
+    </header>
+
+    <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+    <div *ngIf="cargando()" class="alert info">Procesando...</div>
+
+    <section *ngIf="estadoPaso().esPreguntas">
+      <p class="lead">Responde las preguntas de seguridad asociadas a este NIT.</p>
+      <form [formGroup]="respuestasForm" (ngSubmit)="validarPreguntas()">
+        <div class="pregunta" *ngFor="let p of preguntas(); trackBy: trackPregunta">
+          <label>{{ p.texto }}</label>
+          <select [formControlName]="p.id">
+            <option value="">Selecciona una opción</option>
+            <option *ngFor="let opt of p.opciones" [value]="opt">{{ opt }}</option>
+          </select>
+          <div
+            class="hint error"
+            *ngIf="controlPregunta(p.id)?.invalid && (controlPregunta(p.id)?.touched || controlPregunta(p.id)?.dirty)"
+          >
+            Debes elegir una respuesta.
+          </div>
+        </div>
+        <div class="acciones">
+          <button type="submit" [disabled]="cargando()">Validar respuestas</button>
+        </div>
+      </form>
+    </section>
+
+    <section *ngIf="estadoPaso().esDatos">
+      <p class="lead">Confirma o corrige los datos del representante legal.</p>
+      <form [formGroup]="datosForm">
+        <label class="campo">
+          <span>Representante legal</span>
+          <input type="text" formControlName="representanteLegal" />
+        </label>
+        <label class="campo">
+          <span>Correo representante</span>
+          <input type="email" formControlName="correoRepresentante" />
+        </label>
+        <label class="campo">
+          <span>Celular representante</span>
+          <input type="text" formControlName="celularRepresentante" />
+        </label>
+        <label class="campo">
+          <span>Correo administrador</span>
+          <input type="email" formControlName="correoAdmin" />
+        </label>
+        <div class="acciones">
+          <button type="button" class="ghost" (click)="confirmarDatos()" [disabled]="cargando()">Confirmo que son correctos</button>
+          <button type="button" (click)="guardarDatos()" [disabled]="cargando()">Guardar cambios</button>
+        </div>
+      </form>
+    </section>
+
+    <section *ngIf="estadoPaso().esClave">
+      <p class="lead">Define tu nueva clave para este NIT.</p>
+      <form [formGroup]="claveForm" (ngSubmit)="guardarClave()">
+        <label class="campo">
+          <span>Nueva clave</span>
+          <input type="password" formControlName="clave" autocomplete="new-password" />
+        </label>
+        <label class="campo">
+          <span>Confirmar clave</span>
+          <input type="password" formControlName="clave2" autocomplete="new-password" />
+        </label>
+        <div class="acciones">
+          <button type="submit" [disabled]="cargando()">Guardar y continuar</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

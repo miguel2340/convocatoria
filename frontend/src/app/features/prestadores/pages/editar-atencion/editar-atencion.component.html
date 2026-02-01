@@ -1,0 +1,140 @@
+<section class="menu-shell">
+  <div class="menu-card">
+    <h2>Atención al usuario</h2>
+    <p class="lead">NIT: <strong>{{ nit || 'N/D' }}</strong> · Sede: <strong>{{ cod }}</strong></p>
+
+    <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+    <div *ngIf="success()" class="alert alert-success">{{ success() }}</div>
+    <div *ngIf="loading()">Cargando...</div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="form-grid">
+        <label class="field">
+          <span>Dirección</span>
+          <input type="text" formControlName="direccion" />
+        </label>
+        <label class="field">
+          <span>Departamento</span>
+          <input type="text" formControlName="departamento" />
+        </label>
+        <label class="field">
+          <span>Municipio</span>
+          <input type="text" formControlName="municipio" />
+        </label>
+        <label class="field">
+          <span>Mecanismo de citas</span>
+          <select formControlName="mecanismoCitas">
+            <option value="">Seleccione</option>
+            <option value="Presencial">Presencial</option>
+            <option value="No Presencial">No Presencial</option>
+            <option value="Ambos">Ambos</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Correo autorizado</span>
+          <input type="email" formControlName="correoAutorizado" />
+        </label>
+        <label class="field">
+          <span>Teléfono fijo</span>
+          <input type="text" formControlName="telefonoFijo" />
+        </label>
+        <label class="field">
+          <span>Celular</span>
+          <input type="text" formControlName="celular" />
+        </label>
+        <label class="field">
+          <span>Horario desde</span>
+          <input type="time" formControlName="horarioDesde" />
+        </label>
+        <label class="field">
+          <span>Horario hasta</span>
+          <input type="time" formControlName="horarioHasta" />
+        </label>
+        <label class="field">
+          <span>WhatsApp</span>
+          <input type="text" formControlName="whatsapp" />
+        </label>
+        <label class="field">
+          <span>Horario WhatsApp desde</span>
+          <input type="time" formControlName="horarioWhatsappDesde" />
+        </label>
+        <label class="field">
+          <span>Horario WhatsApp hasta</span>
+          <input type="time" formControlName="horarioWhatsappHasta" />
+        </label>
+        <label class="field">
+          <span>Línea telefónica</span>
+          <input type="text" formControlName="lineaTelefonica" />
+        </label>
+        <label class="field">
+          <span>Horario Teléfono desde</span>
+          <input type="time" formControlName="horarioTelefonoDesde" />
+        </label>
+        <label class="field">
+          <span>Horario Teléfono hasta</span>
+          <input type="time" formControlName="horarioTelefonoHasta" />
+        </label>
+        <label class="field">
+          <span>Página web</span>
+          <input type="text" formControlName="paginaWeb" />
+        </label>
+        <label class="field">
+          <span>Correo no presencial</span>
+          <input type="email" formControlName="correoNoPresencial" />
+        </label>
+        <label class="field">
+          <span>Nombre coordinador</span>
+          <input type="text" formControlName="nombreCoordinador" />
+        </label>
+        <label class="field">
+          <span>Teléfono coordinador</span>
+          <input type="text" formControlName="telefonoCoordinador" />
+        </label>
+        <label class="field">
+          <span>Correo coordinador</span>
+          <input type="email" formControlName="correoCoordinador" />
+        </label>
+        <label class="field">
+          <span>Nombre gerente</span>
+          <input type="text" formControlName="nombreGerente" />
+        </label>
+        <label class="field">
+          <span>Correo gerente</span>
+          <input type="email" formControlName="correoGerente" />
+        </label>
+        <label class="field">
+          <span>Celular gerente</span>
+          <input type="text" formControlName="celularGerente" />
+        </label>
+        <label class="field">
+          <span>Correo administrativo</span>
+          <input type="email" formControlName="correoAdministrativo" />
+        </label>
+        <label class="field">
+          <span>Teléfono administrativo</span>
+          <input type="text" formControlName="telefonoAdministrativo" />
+        </label>
+        <label class="field">
+          <span>Celular administrativo</span>
+          <input type="text" formControlName="celularAdministrativo" />
+        </label>
+      </div>
+
+      <div class="checks">
+        <label><input type="checkbox" formControlName="ambulatorio" /> Ambulatorio</label>
+        <label><input type="checkbox" formControlName="hospitalario" /> Hospitalario</label>
+        <label><input type="checkbox" formControlName="domiciliario" /> Domiciliario</label>
+        <label><input type="checkbox" formControlName="transporte" /> Transporte</label>
+        <label><input type="checkbox" formControlName="insumos" /> Insumos</label>
+        <label><input type="checkbox" formControlName="servicioExclusivo" /> Sede exclusiva</label>
+        <label><input type="checkbox" formControlName="servicioAgenda" /> Agenda priorizada</label>
+        <label><input type="checkbox" formControlName="servicioFranjas" /> Franjas horarias</label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" [disabled]="loading()">Guardar</button>
+        <a routerLink="/actualizar-atencion" [queryParams]="{ nit: nit, nombre: nombre }">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</section>

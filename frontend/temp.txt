@@ -1,0 +1,40 @@
+<section class="registro-shell">
+  <div class="registro-card">
+    <h2>Registro de servicios</h2>
+    <p class="lead">NIT: <strong>{{ params['nit'] }}</strong> <span *ngIf="params['nombre']">/ {{ params['nombre'] }}</span></p>
+
+    <div class="state" *ngIf="loading()">Cargando sedes y servicios...</div>
+    <div class="state error" *ngIf="error()">{{ error() }}</div>
+
+    <div class="sedes" *ngIf="direcciones().length">
+      @for (dir of direcciones(); track dir.codHabilitacion) {
+        <div class="sede">
+          <button class="sede__header" type="button" (click)="toggleSede(dir.codHabilitacion)">
+            <div>
+              <p class="sede__title">{{ dir.codHabilitacion }} - {{ dir.departamento }}, {{ dir.municipio }}</p>
+              <p class="sede__address">{{ dir.direccion }}</p>
+            </div>
+            <span class="sede__toggle">{{ abiertas()[dir.codHabilitacion] ? '▲' : '▼' }}</span>
+          </button>
+          <div class="servicios" *ngIf="abiertas()[dir.codHabilitacion]">
+            <p class="hint">Seleccione los servicios que serán prestados.</p>
+            @for (serv of dir.servicios; track serv.codigo) {
+              <label class="servicio">
+                <input type="checkbox" (change)="toggleServicio(serv, $event.target.checked)" />
+                <span>{{ serv.nombre }} <small *ngIf="serv.grupo">({{ serv.grupo }})</small></span>
+              </label>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="actions">
+      <input type="file" multiple hidden #fileInput (change)="onFilesSelected($event)" />
+      <button class="cta-secondary solid" type="button" (click)="fileInput.click()" [disabled]="uploading()">
+        {{ uploading() ? 'Cargando...' : 'Adjuntar documentos' }}
+      </button>
+      <button class="cta" type="button" (click)="validarSoportesAntes()" [disabled]="loading()">
+        Continuar a formularios por sede
+      </button>
+    </div>

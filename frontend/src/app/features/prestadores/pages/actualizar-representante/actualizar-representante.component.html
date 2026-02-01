@@ -1,0 +1,72 @@
+<section class="menu-shell">
+  <div class="menu-card">
+    <h2>Actualizar representante legal</h2>
+    <p class="lead">NIT: <strong>{{ nit || 'N/D' }}</strong> <span *ngIf="nombre">/ {{ nombre }}</span></p>
+
+    <div *ngIf="error()" class="alert alert-error">{{ error() }}</div>
+    <div *ngIf="success()" class="alert alert-success">{{ success() }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="form-grid">
+        <label class="field">
+          <span>Nombre prestador</span>
+          <input type="text" formControlName="nombrePrestador" readonly />
+        </label>
+        <label class="field">
+          <span>Clase de prestador</span>
+          <select formControlName="clasePrestador" required>
+            <option value="">Seleccione una opción</option>
+            <option *ngFor="let c of clases()" [value]="c">{{ c }}</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Teléfono fijo (adm.)</span>
+          <input type="text" formControlName="telefonoFijo" />
+        </label>
+        <label class="field">
+          <span>Celular (adm.)</span>
+          <input type="text" formControlName="celularAdmin" />
+        </label>
+        <label class="field">
+          <span>Correo (adm.)</span>
+          <input type="email" formControlName="correoAdmin" />
+        </label>
+      </div>
+
+      <div class="form-grid rep-grid">
+        <label class="field">
+          <span>Primer nombre</span>
+          <input type="text" formControlName="primerNombre" required />
+        </label>
+        <label class="field">
+          <span>Segundo nombre</span>
+          <input type="text" formControlName="segundoNombre" />
+        </label>
+        <label class="field">
+          <span>Primer apellido</span>
+          <input type="text" formControlName="primerApellido" required />
+        </label>
+        <label class="field">
+          <span>Segundo apellido</span>
+          <input type="text" formControlName="segundoApellido" />
+        </label>
+        <label class="field">
+          <span>Correo representante</span>
+          <input type="email" formControlName="correoRepresentante" />
+        </label>
+        <label class="field">
+          <span>Celular representante</span>
+          <input type="text" formControlName="celularRepresentante" />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" [disabled]="loading()">Guardar cambios</button>
+      </div>
+    </form>
+
+    <div class="volver">
+      <a routerLink="/actualizar-datos" [queryParams]="{ nit: nit, nombre: nombre }">← Volver al submenú</a>
+    </div>
+  </div>
+</section>
